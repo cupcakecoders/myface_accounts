@@ -24,7 +24,7 @@ namespace MyFace.Data
             salt: Encoding.UTF8.GetBytes(salt),
             prf: KeyDerivationPrf.HMACSHA1,
             iterationCount: 1,
-            numBytesRequested: 64 / 8));
+            numBytesRequested: 64 / 6));
         }
     }
 }
