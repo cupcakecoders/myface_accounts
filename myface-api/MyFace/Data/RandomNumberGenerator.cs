@@ -21,5 +21,6 @@ namespace MyFace.Data
         {
             return _random.Next(0, 2) == 0 ? InteractionType.LIKE : InteractionType.DISLIKE;
         }
+        
     }
 }

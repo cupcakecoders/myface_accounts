@@ -68,6 +68,7 @@ namespace MyFace.Repositories
                 Username = newUser.Username,
                 ProfileImageUrl = newUser.ProfileImageUrl,
                 CoverImageUrl = newUser.CoverImageUrl,
+                HashedPassword = newUser.Password,
             });
             _context.SaveChanges();
 
