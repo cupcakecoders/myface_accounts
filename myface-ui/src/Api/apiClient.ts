@@ -46,7 +46,11 @@ export async function fetchUsers(searchTerm: string, page: number, pageSize: num
 }
 
 export async function fetchUser(userId: string | number): Promise<User> {
-    const response = await fetch(`https://localhost:5001/users/${userId}`);
+    const response = await fetch(`https://localhost:5001/users/${userId}`, {
+        headers: {
+            Authorization: `Basic IGtwbGFjaWRvMDpzYWlsYXdheQ==`
+        }
+    });
     return await response.json();
 }
 

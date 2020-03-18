@@ -9,13 +9,18 @@ import "./Profile.scss";
 export function Profile(): JSX.Element {
     const {id} = useParams();
     
+    if (!id) {
+        // Shouldn't ever get here!
+        return <div>No id found</div>
+    }
+    
     return (
         <Page containerClassName="profile">
-            <UserDetails userId={id!!}/>
+            <UserDetails userId={id}/>
             <div className="activity">
-                <PostList title="Posts" fetchPosts={() => fetchPostsForUser(1, 12, id!!)}/>
-                <PostList title="Likes" fetchPosts={() => fetchPostsLikedBy(1, 12, id!!)}/>
-                <PostList title="Dislikes" fetchPosts={() => fetchPostsDislikedBy(1, 12, id!!)}/>
+                <PostList title="Posts" fetchPosts={() => fetchPostsForUser(1, 12, id)}/>
+                <PostList title="Likes" fetchPosts={() => fetchPostsLikedBy(1, 12, id)}/>
+                <PostList title="Dislikes" fetchPosts={() => fetchPostsDislikedBy(1, 12, id)}/>
             </div>
         </Page>
     );
