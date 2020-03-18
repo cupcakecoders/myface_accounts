@@ -5,13 +5,12 @@ import "./Login.scss";
 
 export function Login(): JSX.Element {
     const loginContext = useContext(LoginContext);
-    
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     
     function tryLogin(event: FormEvent) {
         event.preventDefault();
-        loginContext.logIn();
+        loginContext.logIn(username, password);
     }
     
     return (

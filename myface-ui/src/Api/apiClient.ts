@@ -1,4 +1,6 @@
-﻿export interface ListResponse<T> {
+﻿import {Login} from "../Pages/Login/Login";
+
+export interface ListResponse<T> {
     items: T[];
     totalNumberOfItems: number;
     page: number;
@@ -45,10 +47,18 @@ export async function fetchUsers(searchTerm: string, page: number, pageSize: num
     return await response.json();
 }
 
+export function basicAuthHeaders() {
+    const username = window.localStorage.getItem("username");
+    const password = window.localStorage.getItem("password");
+    const b64usernameAndPassword = btoa(`${username}:${password}`);
+    return `Basic ${b64usernameAndPassword}`
+}
+
 export async function fetchUser(userId: string | number): Promise<User> {
+    // get the username and password from localstorage, and make the auth header
     const response = await fetch(`https://localhost:5001/users/${userId}`, {
         headers: {
-            Authorization: `Basic IGtwbGFjaWRvMDpzYWlsYXdheQ==`
+            Authorization: basicAuthHeaders()
         }
     });
     return await response.json();

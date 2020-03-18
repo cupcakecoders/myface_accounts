@@ -3,7 +3,7 @@
 export const LoginContext = createContext({
     isLoggedIn: false,
     isAdmin: false,
-    logIn: () => {},
+    logIn: (username: string, password: string) => {},
     logOut: () => {},
 });
 
@@ -12,10 +12,12 @@ interface LoginManagerProps {
 }
 
 export function LoginManager(props: LoginManagerProps): JSX.Element {
-    const [loggedIn, setLoggedIn] = useState(true);
+    const [loggedIn, setLoggedIn] = useState(false);
     
-    function logIn() {
-        setLoggedIn(true);
+    function logIn(username: string, password: string) {
+        setLoggedIn(true); 
+        window.localStorage.setItem('username', username);
+        window.localStorage.setItem('password', password);
     }
     
     function logOut() {
