@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyFace.Models.Request;
 using MyFace.Models.Response;
@@ -12,6 +14,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Primitives;
+using MyFace.Data;
 using MyFace.Models.Database;
 
 namespace MyFace.Controllers
@@ -40,27 +43,31 @@ namespace MyFace.Controllers
         {
             var authHeader = Request.Headers["Authorization"];
             
-            if ( String.IsNullOrEmpty(authHeader).Equals(false) && authHeader.ToString().Contains("Basic"))
+            if (String.IsNullOrEmpty(authHeader).Equals(false) && authHeader.ToString().Contains("Basic"))
             {
                 StringValues encodedUsernamePassword = authHeader.ToString().Remove(0, 6);
                 var usernamePassword = Convert.FromBase64String(encodedUsernamePassword);
                 string decoded = Encoding.UTF8.GetString(usernamePassword);
+                var splitDecodedUnPwd = decoded.Split(":");
+                var userQueryUsername = _users.Where(splitDecodedUnPwd[0]);
+                var getHashedPassword = userQueryUsername.HashedPassword;
+                var getUserSalt = userQueryUsername.Salt;
+                var decodedPassword = splitDecodedUnPwd[1];
+                var decodedPasswordHashed = HashSalt.HashPassword(decodedPassword, getUserSalt);
+                
+                if (getHashedPassword.Equals(decodedPasswordHashed))
+                {
+                    GetById(userQueryUsername.Id);
+                }
+                else
+                {
+                    throw new HttpRequestException("login failed try again");
+                }
+
             } else {
                 throw new Exception("The authorization header is either empty or isn't Basic.");
             }
 
-            var userQueryUsername = _users.Where("kplacido0");
-
-            //userQueryUsername.HashedPassword
-
-            var password = "sailaway";
-            var username = "kplacido0";
-            // _users.GetByUsernamePassword(password, username)
-            // you get back a user COOL
-            //
-            // if the user that came back has the same id as the one we are looking for in the url /users/1
-            // then return the user
-            // otherwise return 401
             var user = _users.GetById(id);
             return new UserResponse(user);
         }
