@@ -1,7 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using MyFace.Models.Request;
 using MyFace.Models.Response;
 using MyFace.Repositories;
+    using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Primitives;
+using MyFace.Models.Database;
 
 namespace MyFace.Controllers
 {
@@ -15,7 +26,7 @@ namespace MyFace.Controllers
         {
             _users = users;
         }
-        
+
         [HttpGet("")]
         public ActionResult<UserListResponse> Search([FromQuery] SearchRequest searchRequest)
         {
@@ -27,6 +38,29 @@ namespace MyFace.Controllers
         [HttpGet("{id}")]
         public ActionResult<UserResponse> GetById([FromRoute] int id)
         {
+            var authHeader = Request.Headers["Authorization"];
+            
+            if ( String.IsNullOrEmpty(authHeader).Equals(false) && authHeader.ToString().Contains("Basic"))
+            {
+                StringValues encodedUsernamePassword = authHeader.ToString().Remove(0, 6);
+                var usernamePassword = Convert.FromBase64String(encodedUsernamePassword);
+                string decoded = Encoding.UTF8.GetString(usernamePassword);
+            } else {
+                throw new Exception("The authorization header is either empty or isn't Basic.");
+            }
+
+            var userQueryUsername = _users.Where("kplacido0");
+
+            //userQueryUsername.HashedPassword
+
+            var password = "sailaway";
+            var username = "kplacido0";
+            // _users.GetByUsernamePassword(password, username)
+            // you get back a user COOL
+            //
+            // if the user that came back has the same id as the one we are looking for in the url /users/1
+            // then return the user
+            // otherwise return 401
             var user = _users.GetById(id);
             return new UserResponse(user);
         }

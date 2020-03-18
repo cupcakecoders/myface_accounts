@@ -15,6 +15,7 @@ namespace MyFace.Repositories
         User Create(CreateUserRequest newUser);
         User Update(int id, UpdateUserRequest update);
         void Delete(int id);
+        User Where(string usernameQuery);
     }
     
     public class UsersRepo : IUsersRepo
@@ -40,6 +41,10 @@ namespace MyFace.Repositories
                 .Skip((search.Page - 1) * search.PageSize)
                 .Take(search.PageSize);
         }
+
+        /*IEnumerable<User> 
+        {
+        }*/
 
         public int Count(SearchRequest search)
         {
@@ -101,6 +106,12 @@ namespace MyFace.Repositories
             var user = GetById(id);
             _context.Users.Remove(user);
             _context.SaveChanges();
+        }
+
+        public User Where(string usernameQuery)
+        {
+            return _context.Users
+                .Single(user => user.Username == usernameQuery);
         }
     }
 }
