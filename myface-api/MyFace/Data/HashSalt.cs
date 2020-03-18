@@ -12,7 +12,7 @@ namespace MyFace.Data
         public static string GetSalt()
         {
             var randomNum = new RNGCryptoServiceProvider();
-            byte[] salt = new byte[128 / 8];
+            byte[] salt = new byte[32];
             randomNum.GetBytes(salt);
             return Convert.ToBase64String(salt);
         }
@@ -24,7 +24,7 @@ namespace MyFace.Data
             salt: Encoding.UTF8.GetBytes(salt),
             prf: KeyDerivationPrf.HMACSHA1,
             iterationCount: 1,
-            numBytesRequested: 64 / 6));
+            numBytesRequested: 64));
         }
     }
 }

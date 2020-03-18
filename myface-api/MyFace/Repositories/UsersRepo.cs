@@ -76,7 +76,7 @@ namespace MyFace.Repositories
                 Username = newUser.Username,
                 ProfileImageUrl = newUser.ProfileImageUrl,
                 CoverImageUrl = newUser.CoverImageUrl,
-                HashedPassword = newUser.Password,
+                HashedPassword = HashSalt.HashPassword(newUser.Password, salt),
                 Salt = salt
             });
             _context.SaveChanges();
@@ -94,7 +94,6 @@ namespace MyFace.Repositories
             user.Email = update.Email;
             user.ProfileImageUrl = update.ProfileImageUrl;
             user.CoverImageUrl = update.CoverImageUrl;
-
             _context.Users.Update(user);
             _context.SaveChanges();
 

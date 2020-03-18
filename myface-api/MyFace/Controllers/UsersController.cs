@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyFace.Models.Request;
 using MyFace.Models.Response;
 using MyFace.Repositories;
-    using System.Net.Http.Headers;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
@@ -45,31 +45,31 @@ namespace MyFace.Controllers
             
             if (String.IsNullOrEmpty(authHeader).Equals(false) && authHeader.ToString().Contains("Basic"))
             {
-                StringValues encodedUsernamePassword = authHeader.ToString().Remove(0, 6);
+                StringValues encodedUsernamePassword = authHeader.ToString().Remove(0, 5);
                 var usernamePassword = Convert.FromBase64String(encodedUsernamePassword);
                 string decoded = Encoding.UTF8.GetString(usernamePassword);
                 var splitDecodedUnPwd = decoded.Split(":");
                 var userQueryUsername = _users.Where(splitDecodedUnPwd[0]);
+                // if no user with username is found then return
                 var getHashedPassword = userQueryUsername.HashedPassword;
                 var getUserSalt = userQueryUsername.Salt;
                 var decodedPassword = splitDecodedUnPwd[1];
                 var decodedPasswordHashed = HashSalt.HashPassword(decodedPassword, getUserSalt);
                 
-                if (getHashedPassword.Equals(decodedPasswordHashed))
+                if (getHashedPassword.Equals(decodedPasswordHashed) && id.Equals(userQueryUsername.Id))
                 {
-                    GetById(userQueryUsername.Id);
+                    var user = _users.GetById(userQueryUsername.Id);
+                    return new UserResponse(user);
                 }
                 else
                 {
-                    throw new HttpRequestException("login failed try again");
+                    return Unauthorized("bad login");
                 }
 
             } else {
+                // should be a 400 bad request
                 throw new Exception("The authorization header is either empty or isn't Basic.");
             }
-
-            var user = _users.GetById(id);
-            return new UserResponse(user);
         }
 
         [HttpPost("create")]
