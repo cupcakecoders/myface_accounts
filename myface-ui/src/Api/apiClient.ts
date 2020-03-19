@@ -1,4 +1,8 @@
 ﻿import {Login} from "../Pages/Login/Login";
+import {LoginContext, LoginManager} from "../Components/LoginManager/LoginManager";
+import {useContext} from "react";
+
+//learn how to use state hooks. look at react context. maybe export hooks. 
 
 export interface ListResponse<T> {
     items: T[];
@@ -47,15 +51,18 @@ export async function fetchUsers(searchTerm: string, page: number, pageSize: num
     return await response.json();
 }
 
+
+
 export function basicAuthHeaders() {
-    const username = window.localStorage.getItem("username");
-    const password = window.localStorage.getItem("password");
-    const b64usernameAndPassword = btoa(`${username}:${password}`);
-    return `Basic ${b64usernameAndPassword}`
+    const Login = () =>{
+        const loginContext = useContext(LoginContext);
+    /*const username = window.localStorage.getItem("username");
+    const password = window.localStorage.getItem("password");*/
+    const b64usernameAndPassword = btoa(`${loginContext.username}:${loginContext.password}`);
+    return `Basic ${b64usernameAndPassword}`};
 }
 
 export async function fetchUser(userId: string | number): Promise<User> {
-    // get the username and password from localstorage, and make the auth header
     const response = await fetch(`https://localhost:5001/users/${userId}`, {
         headers: {
             Authorization: basicAuthHeaders()
@@ -64,7 +71,8 @@ export async function fetchUser(userId: string | number): Promise<User> {
     return await response.json();
 }
 
-export async function fetchPosts(page: number, pageSize: number): Promise<ListResponse<Post>> {
+export async function fetchPosts(page: number, pageSize: number, username: string, password: string): Promise<ListResponse<Post>> {
+    console.log(username, password);
     const response = await fetch(`https://localhost:5001/feed?page=${page}&pageSize=${pageSize}`);
     return await response.json();
 }
